@@ -6,7 +6,7 @@ by UNICORN Chromatography software supplied with ÄKTA Systems
 v0.18
 '''
 
-from __future__ import print_function
+
 from collections import OrderedDict
 from zipfile import ZipFile
 from zipfile import is_zipfile
@@ -124,7 +124,7 @@ class pc_res3(OrderedDict):
             print("  MAGIC_ID, ENTRY_NAME, BLOCK_SIZE, OFFSET_TO_NEXT, ADRESSE, OFFSET_TO_DATA")
         else:
             print(" ENTRY_NAME, BLOCK_SIZE, OFFSET_TO_NEXT, ADRESSE, OFFSET_TO_DATA")
-        num_blocks = len(self.items())
+        num_blocks = len(list(self.items()))
         for i in range(num_blocks):
             dtp = (list(self.items()))[i][1]
             if full:
@@ -224,7 +224,7 @@ class pc_res3(OrderedDict):
             s_unit_dec = (codecs.decode(s_unit[0], 'iso8859-1')).rstrip('\x00')
             # FIX: in some files the unit for temperature reads 'C' instead of '°C' 
             if s_unit_dec == 'C':
-                s_unit_dec = u'°C'
+                s_unit_dec = '°C'
         for i in range(dat['d_start'], dat['d_end'], 8):
             sread = struct.unpack("ii", fread[i:i + 8])
             data = round((sread[0] / 100.0) - self.inject_vol, 4), sread[1] / sensor_div
@@ -238,7 +238,7 @@ class pc_res3(OrderedDict):
         if self.injection_points == None:
             self.injection_points = [0.0]
             inject_ids = [self.Inject_id, self.Inject_id2]
-            for i in self.values():
+            for i in list(self.values()):
                 if i['magic_id'] in inject_ids:
                     injection = self.meta1_read(i, show=show, do_it_for_inj_det=True)[0][0]
                     if injection != 0.0:
@@ -306,7 +306,7 @@ class pc_uni6(OrderedDict):
             self.update(zip_data)
             proc_yes = []
             proc_no = []
-            for i in self.keys():
+            for i in list(self.keys()):
                 tmp_raw = io.BytesIO(input_zip.read(i))
                 f_header = tmp_raw.read(9)
                 # tmp_raw.seek(0)
@@ -335,7 +335,7 @@ class pc_uni6(OrderedDict):
                     print(" " + i)
         # filter out data we dont deal with atm
         to_process = []
-        for i in self.keys():
+        for i in list(self.keys()):
             if "Chrom" in i and not "Xml" in i:
                 to_process.append(i)
         if show:
@@ -343,7 +343,7 @@ class pc_uni6(OrderedDict):
             for i in to_process:
                 print(" " + i)
         for i in to_process:
-            for n in self[i].keys():
+            for n in list(self[i].keys()):
                 if "DataType" in n:
                     a = self[i][n]
                     b = a.decode('utf-8')

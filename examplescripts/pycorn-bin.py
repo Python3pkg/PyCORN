@@ -144,7 +144,7 @@ def smartscale(inp):
     checks user input/fractions to determine scaling of x/y-axis
     returns min/max for x/y
     '''
-    UV_blocks = [i for i in inp.keys() if i.startswith('UV') and not i.endswith('_0nm')]
+    UV_blocks = [i for i in list(inp.keys()) if i.startswith('UV') and not i.endswith('_0nm')]
     uv1_data = inp[UV_blocks[0]]['data']
     uv1_x, uv1_y = xy_data(uv1_data)
     try:
@@ -208,10 +208,10 @@ def plotterX(inp,fname):
     host.set_ylabel("Absorbance (mAu)")
     host.set_xlim(plot_x_min, plot_x_max)
     host.set_ylim(plot_y_min, plot_y_max)
-    for i in inp.keys():
+    for i in list(inp.keys()):
         if i.startswith('UV') and not i.endswith('_0nm'):
             x_dat, y_dat = xy_data(inp[i]['data'])
-            print("Plotting: " + inp[i]['data_name'])
+            print(("Plotting: " + inp[i]['data_name']))
             stl = styles[i[:4]]
             p0, = host.plot(x_dat, y_dat, label=inp[i]['data_name'], color=stl['color'],
                             ls=stl['ls'], lw=stl['lw'],alpha=stl['alpha'])
@@ -227,7 +227,7 @@ def plotterX(inp,fname):
             x_dat_p1, y_dat_p1 = xy_data(par1_data['data'])
             p1_ymin, p1_ymax = expander(min(y_dat_p1), max(y_dat_p1), 0.085)
             par1.set_ylim(p1_ymin, p1_ymax)
-            print("Plotting: " + par1_data['data_name'])
+            print(("Plotting: " + par1_data['data_name']))
             p1, = par1.plot(x_dat_p1, y_dat_p1, label=par1_data['data_name'], 
             color=stl['color'], ls=stl['ls'], lw=stl['lw'], alpha=stl['alpha'])
         except:
@@ -248,7 +248,7 @@ def plotterX(inp,fname):
             x_dat_p2, y_dat_p2 = xy_data(par2_data['data'])
             p2_ymin, p2_ymax = expander(min(y_dat_p2), max(y_dat_p2), 0.075)
             par2.set_ylim(p2_ymin, p2_ymax)
-            print("Plotting: " + par2_data['data_name'])
+            print(("Plotting: " + par2_data['data_name']))
             p2, = par2.plot(x_dat_p2, y_dat_p2, label=par2_data['data_name'], 
             color=stl['color'],ls=stl['ls'], lw=stl['lw'], alpha=stl['alpha'])
         except:
@@ -281,15 +281,15 @@ def plotterX(inp,fname):
         plt.title(fname, loc='left', size=9)
     plot_file = fname[:-4] + "_" + inp.run_name + "_plot." + args.format
     plt.savefig(plot_file, bbox_inches='tight', dpi=args.dpi)
-    print("Plot saved to: " + plot_file)
+    print(("Plot saved to: " + plot_file))
     plt.clf()
 
 def data_writer1(fname, inp):
     '''
     writes sensor/run-data to csv-files
     '''
-    for i in inp.keys():
-        print("Writing: " + inp[i]['data_name'])
+    for i in list(inp.keys()):
+        print(("Writing: " + inp[i]['data_name']))
         outfile_base = fname[:-4] + "_" + inp.run_name + "_" + inp[i]['data_name']
         type = inp[i]['data_type']
         if type == 'meta':
@@ -319,7 +319,7 @@ def generate_xls(inp, fname):
     worksheet = workbook.add_worksheet()
     writable_blocks = [inp.Fractions_id, inp.Fractions_id2, inp.SensData_id, inp.SensData_id2]
     d_list = []
-    for i in inp.keys():
+    for i in list(inp.keys()):
         if inp[i]['magic_id'] in writable_blocks:
             d_list.append(i)
     for i in d_list:
@@ -335,13 +335,13 @@ def generate_xls(inp, fname):
         dat.insert(1, header2)
         row = 0
         col = d_list.index(i) *2
-        print("Writing: " + i)
+        print(("Writing: " + i))
         for x_val, y_val in (dat):
             worksheet.write(row, col, x_val)
             worksheet.write(row, col + 1, y_val)
             row += 1
     workbook.close()
-    print("Data written to: " + xls_filename) 
+    print(("Data written to: " + xls_filename)) 
 
                     
 styles = {'UV':{'color': '#1919FF', 'lw': 1.6, 'ls': "-", 'alpha':1.0},
@@ -383,7 +383,7 @@ def main2():
             fdata.inject_det(show=True)
         if args.user:
             user = fdata.get_user()
-            print("User: " + user)
+            print(("User: " + user))
         if args.plot and plotting:
             plotterX(fdata, fname)
 
